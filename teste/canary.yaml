@@ -7,8 +7,9 @@ data:
     <html style="background-color: blue">
     <body>
       <p>Teste de canary</p>
-      <p>$MY_POD_NAME</p>
+      <p>%MY_POD_NAME%</p>
     </body>
+    <script type="text/javascript" charset="utf-8" src="static/'%MY_POD_NAME%'?'vendors.min.js':'vendors.js'"></script>
     </html>
 ---
 apiVersion: v1
@@ -17,11 +18,12 @@ metadata:
   name: nginx-deployment-green
 data:
   index.html: |
-    <html style="background-color: green">
+    <html style="background-color: blue">
     <body>
       <p>Teste de canary</p>
-      <p>$MY_POD_NAME</p>
+      <p>%MY_POD_NAME%</p>
     </body>
+    <script type="text/javascript" charset="utf-8" src="static/'%MY_POD_NAME%'?'vendors.min.js':'vendors.js'"></script>
     </html>
 ---
 apiVersion: argoproj.io/v1alpha1
