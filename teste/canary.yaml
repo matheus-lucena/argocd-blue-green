@@ -5,6 +5,8 @@ metadata:
 data:
   index.html: |
     <html style="background-color: blue"/>
+  health: |
+    <html/>
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -13,6 +15,8 @@ metadata:
 data:
   index.html: |
     <html style="background-color: green"/>
+  health: |
+    <html/>
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -63,8 +67,15 @@ spec:
       volumes:
       - name: nginx-data
         configMap:
-          name: nginx-deployment-blue
-
+          name: nginx-deployment-green
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 80
+        initialDelaySeconds: 5
+        timeoutSeconds: 2
+        periodSeconds: 5
+        failureThreshold: 3
 ---
 
 apiVersion: v1
