@@ -5,8 +5,6 @@ metadata:
 data:
   index.html: |
     <html style="background-color: blue"/>
-  health: |
-    <html/>
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -16,7 +14,7 @@ data:
   index.html: |
     <html style="background-color: green"/>
   health: |
-    <html/>
+    <html><body>teste<body/><html/>
 
 ---
 apiVersion: argoproj.io/v1alpha1
