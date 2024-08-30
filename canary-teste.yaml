@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-deployment-blue
+data:
+  index.html: |
+    <html style="background-color: blue"/>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-deployment-green
+data:
+  index.html: |
+    <html style="background-color: green"/>
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollouts-demo
+spec:
+  replicas: 5
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      - pause: {duration: 10}
+      - setWeight: 40
+      - pause: {duration: 10}
+      - setWeight: 60
+      - pause: {duration: 10}
+      - setWeight: 80
+      - pause: {duration: 10}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: rollouts-demo
+  template:
+    metadata:
+      labels:
+        app: rollouts-demo
+    spec:
+      containers:
+      - name: rollouts-demo
+        image: nginx:latest
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        resources:
+          requests:
+            memory: 32Mi
+            cpu: 5m
+        volumeMounts:
+          - name: nginx-data
+            mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: nginx-data
+        configMap:
+          name: nginx-deployment-green
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: rollouts-demo
+spec:
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: rollouts-demo
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-teste
+  annotations:
+    cert-manager.io/issuer: "cloudflare-letsencrypt"
+spec:
+  tls:
+    - hosts:
+        - teste-canary3.matheuslucena.dev
+      secretName: ingress-canary-tls
+  rules:
+  - host: teste-canary3.matheuslucena.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rollouts-demo
+            port:
+              number: 80
+  ingressClassName: nginx
