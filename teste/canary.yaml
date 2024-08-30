@@ -4,7 +4,12 @@ metadata:
   name: nginx-deployment-blue
 data:
   index.html: |
-    <html style="background-color: blue"/>
+    <html style="background-color: blue">
+    <body>
+      <p>Teste de canary</p>
+      <p>$MY_POD_NAME</p>
+    </body>
+    </html>
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -12,7 +17,12 @@ metadata:
   name: nginx-deployment-green
 data:
   index.html: |
-    <html style="background-color: green"/>
+    <html style="background-color: green">
+    <body>
+      <p>Teste de canary</p>
+      <p>$MY_POD_NAME</p>
+    </body>
+    </html>
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -54,6 +64,11 @@ spec:
         volumeMounts:
           - name: nginx-data
             mountPath: /usr/share/nginx/html/
+        env:
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
       volumes:
       - name: nginx-data
         configMap:
