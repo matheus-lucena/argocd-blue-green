@@ -65,7 +65,7 @@ spec:
       volumes:
       - name: nginx-data
         configMap:
-          name: nginx-deployment-blue
+          name: nginx-deployment-green
       livenessProbe:
         httpGet:
           path: /health
