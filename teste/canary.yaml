@@ -100,10 +100,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - teste-canary3.matheuslucena.dev
+        - teste-canary3.diadecloud.com
       secretName: ingress-canary-tls
   rules:
-  - host: teste-canary3.matheuslucena.dev
+  - host: teste-canary3.diadecloud.com
     http:
       paths:
       - path: /
